@@ -1,0 +1,8 @@
+dev_dependencies:
+  flutter_launcher_icons: "^0.8.0"
+
+flutter_icons:
+  android: "launcher_icon"
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#1a237e"
+  adaptive_icon_foreground: "assets/icon/app_adaptive_fg.png"
