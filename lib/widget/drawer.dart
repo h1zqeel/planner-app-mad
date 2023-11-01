@@ -10,15 +10,15 @@ import 'package:planerio/google/google_sign_in.dart';
 import 'package:planerio/taskList.dart';
 import 'package:planerio/transition/Slide.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart' as badges;
 
 class myDrawer extends StatelessWidget {
- late bool isNotif;
- late Function x;
-myDrawer(i,f){
-  isNotif = i;
-  x = f;
-}
-
+  late bool isNotif;
+  late Function x;
+  myDrawer(i, f) {
+    isNotif = i;
+    x = f;
+  }
 
   Color colorConvert(String color) {
     color = color.replaceAll("#", "");
@@ -31,72 +31,77 @@ myDrawer(i,f){
   }
 
   Widget build(BuildContext context) {
-
-
     return buildDrawer(context);
-
   }
+
   final user = FirebaseAuth.instance.currentUser;
 
   Widget buildDrawer(context) => Drawer(
+        child: Container(
+          color: colorConvert("#ffffff"),
+          child: Column(
+            children: [
+              DrawerHeader(
+                child: Wrap(children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: NetworkImage(
+                        user!.photoURL!.replaceAll('s96-c', 's300-c'),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: Text(
+                        user!.displayName!,
+                        style: TextStyle(color: Colors.grey[800]),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      Slide(builder: (context) => AddFriend()),
+                    ).then((value) => x());
+                  },
+                  child: ListTile(
+                    title: Text('Add Friends'),
+                    trailing: isNotif ? badges.Badge() : Text(""),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      Slide(builder: (context) => FriendsList()),
+                    );
+                  },
+                  child: ListTile(
+                    title: Text('Friends'),
+                  )),
+              // ListTile(title: Text('Add a Friend'), onTap: () {}),
 
-    child: Container(
-      color: colorConvert("#ffffff"),
-      child: Column(
-        children: [
-          DrawerHeader(
-            child: Wrap(children: [
               Align(
-                alignment: Alignment.center,
-                child: CircleAvatar(
-                  radius: 70,
-                  backgroundImage: NetworkImage(
-                    user!.photoURL!.replaceAll('s96-c', 's300-c'),
-                  ),
-                ),
+                alignment: Alignment.bottomLeft,
+                child: TextButton(
+                    onPressed: () {
+                      final provider = Provider.of<GoogleSignInProvider>(
+                          context,
+                          listen: false);
+                      provider.logout();
+                    },
+                    child: ListTile(title: Text('Logout'))),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Center(
-                  child: Text(
-                    user!.displayName!,
-                    style: TextStyle(color: Colors.grey[800]),
-                  ),
-                ),
-              ),
-            ]),
+            ],
           ),
-          SizedBox(height: 30,),
-          TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  Slide(builder: (context) => AddFriend()),
-                ).then((value) => x());
-              },
-              child: ListTile(title: Text('Add Friends'),trailing: isNotif? Badge():Text(""),)),
-          TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  Slide(builder: (context) => FriendsList()),
-                );
-              },
-              child: ListTile(title: Text('Friends'),)),
-          // ListTile(title: Text('Add a Friend'), onTap: () {}),
-
-          Align(
-            alignment: Alignment.bottomLeft,
-            child:  TextButton(
-                onPressed: () {
-                  final provider = Provider.of<GoogleSignInProvider>(context,listen: false);
-                  provider.logout();
-                },
-                child: ListTile(title: Text('Logout'))),
-          ),
-
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
