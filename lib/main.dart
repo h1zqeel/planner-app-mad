@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:planerio/firebase_options.dart';
 import 'package:planerio/google/google_sign_in.dart';
 import 'package:planerio/google/google_signup_widget.dart';
 import 'package:planerio/google/sign_up_wdget.dart';
@@ -11,11 +12,9 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
-
-
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -38,40 +37,31 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-
   @override
   Widget build(BuildContext context) {
-     return ChangeNotifierProvider(create:
-         (context)=> GoogleSignInProvider(),
-             child: Scaffold(body: StreamBuilder(
-
-               stream: FirebaseAuth.instance.authStateChanges(),
-               builder: (context,snapshot) {
-
-                 if(snapshot.hasData){
-
-                   return TaskList();
-                 }
-
-                 else if(snapshot.hasError){
-                   return Center(child: Text('An Error Occured'),);
-                 }
-                 else if(snapshot.connectionState == ConnectionState.active){
-                   return SignUpWidget();
-                 }
-
-                 else {
-                   return Center(child: CircularProgressIndicator(),);
-                 }
-
-
-               },
-             )
-
-
-
-         ,),);
-
+    return ChangeNotifierProvider(
+      create: (context) => GoogleSignInProvider(),
+      child: Scaffold(
+        body: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return TaskList();
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('An Error Occured'),
+              );
+            } else if (snapshot.connectionState == ConnectionState.active) {
+              return SignUpWidget();
+            } else {
+              return Center(
+                child: Text("hello"),
+              );
+            }
+          },
+        ),
+      ),
+    );
 
     // return Scaffold(body: StreamBuilder(
     //   stream: FirebaseAuth.instance.authStateChanges(),
@@ -82,10 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
     //  },
     // ),
     // );
-
-
   }
 }
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
